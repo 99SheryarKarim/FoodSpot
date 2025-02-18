@@ -1,0 +1,29 @@
+{
+    "data": [
+      {
+        "id": 1,
+        "city": "New York",
+        "temperature": 25,
+        "condition": "Sunny",
+        "humidity": 50,
+        "icon": "https://example.com/sunny-icon.png"
+      },
+      {
+        "id": 2,
+        "city": "London",
+        "temperature": 18,
+        "condition": "Cloudy",
+        "humidity": 70,
+        "icon": "https://example.com/cloudy-icon.png"
+      },
+      {
+        "id": 3,
+        "city": "Tokyo",
+        "temperature": 22,
+        "condition": "Rainy",
+        "humidity": 80,
+        "icon": "https://example.com/rainy-icon.png"
+      }
+    ]
+  }
+  
