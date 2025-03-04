@@ -1,187 +1,218 @@
-// LoginScreen.js
-
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
+import { 
+  View, 
+  StyleSheet, 
+  Image, 
+  Text, 
+  TouchableOpacity, 
+  Modal, 
+  FlatList, 
+  Dimensions 
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+
+const handleLogin = () => {
+  // Simulate successful login
+  if (email === 'test@example.com' && password === 'password') {
+    navigation.replace("MainApp"); // Navigate to the main app after login
+  } else {
+    alert("Invalid credentials");
+  }
+};
+
+
+
+const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('window').width;
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    return emailRegex.test(email);
-  };
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address.');
-      return;
-    }
-
-    try {
-      await AsyncStorage.setItem('userEmail', email);
-      console.log('Email saved:', email); // Debugging step
-      navigation.navigate('Home'); // Ensure this is correctly navigating to 'Home'
-    } catch (error) {
-      Alert.alert('Error', 'Failed to log in. Please try again.');
-    }
-  };
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const languages = ['English', 'Urdu', 'Spanish', 'French', 'German'];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.innerContainer}>
-            <Image source={require('../../../assets/locks.jpg')} style={styles.image} />
-            <Text style={styles.title}>Welcome back :)</Text>
-            <View style={styles.underline} />
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headone}>
+          <Image
+            source={require('../../../assets/shedyy.png')}
+            style={styles.profileImage}
+          />
+        </View>
 
-            {/* Email Input with Icon */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={22} color="#777" style={styles.icon} />
-              <TextInput
-                placeholder="Email Address"
-                style={styles.input}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
+        <View style={styles.headtwo}>
+          <TouchableOpacity
+            style={styles.languageButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.languageText}>{selectedLanguage}</Text>
+          </TouchableOpacity>
 
-            {/* Password Input with Icon */}
-            <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={22} color="#777" style={styles.icon} />
-              <TextInput
-                placeholder="Password"
-                style={styles.input}
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
-            </View>
-
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.subtitle}>
-              Don't have an account?{' '}
-              <Text style={styles.link} onPress={() => navigation.navigate('Signup')}>
-                Sign Up
-              </Text>
-            </Text>
-
-            <Text
-              style={styles.forgotPassword}
-              onPress={() => navigation.navigate('ForgotPassword')}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <TouchableOpacity
+              style={styles.modalBackground}
+              onPress={() => setModalVisible(false)}
             >
-              Forgot password?
-            </Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+              <View style={styles.modalContainer}>
+                <FlatList
+                  data={languages}
+                  keyExtractor={(item) => item}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.languageOption}
+                      onPress={() => {
+                        setSelectedLanguage(item);
+                        setModalVisible(false);
+                      }}
+                    >
+                      <Text style={styles.languageOptionText}>{item}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            </TouchableOpacity>
+          </Modal>
+        </View>
+      </View>
+
+      {/* Welcome Image */}
+      <View style={styles.welcome}>
+        <Image
+          source={require('../../../assets/welcome.png')}
+          style={styles.welcomeImage}
+        />
+      </View>
+
+      {/* Buttons */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => navigation.navigate('AuthGoog')}
+        >
+          <Text style={styles.buttonText}>Sign in</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => console.log('Sign up')}
+        >
+          <Text   onPress={handleLogin} style={styles.buttonText}>Sign up</Text>
+        </TouchableOpacity>
+
+        <View style={styles.termsContainer}>
+          <Text style={styles.termsText}>
+            By signing up or logging in, you agree to our Terms of Service{'\n'}and Privacy Policy
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#000000',
   },
-  innerContainer: {
-    flex: 1,
+  header: {
+    width: '100%',
+    height: 60,
+    marginTop: 40,
+    flexDirection: 'row',
+  },
+  headone: {
+    width: '50%',
+    backgroundColor: '#1a1a1a',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 62,
-    padding: 20,
   },
-  image: {
-    width: 150,
-    height: 145,
-    marginBottom: 20,
-    opacity: 0.9,
+  headtwo: {
+    width: '50%',
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
+  profileImage: {
+    width: 140,
+    height: 90,
+    resizeMode: 'contain',
+  },
+  languageButton: {
+    borderColor: 'white',
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 30,
+  },
+  languageText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    backgroundColor: 'black',
+    borderRadius: 20,
+    paddingVertical: 10,
+    width: 120,
+    elevation: 5,
+    marginLeft: 190,
+    marginTop: 70,
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  languageOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+  },
+  languageOptionText: {
+    fontSize: 16,
+    color: 'white',
     textAlign: 'center',
   },
-  underline: {
-    width: 300,
-    height: 4,
-    backgroundColor: '#FF6347',
-    borderRadius: 2,
-    marginBottom: 20,
-  },
-  inputContainer: {
-    flexDirection: 'row',
+  welcome: {
+    width: screenWidth,
+    height: screenHeight * 0.6,
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 15,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 30,
-    backgroundColor: '#f9f9f9',
-    marginBottom: 15,
   },
-  icon: {
-    marginRight: 10,
+  welcomeImage: {
+    width: '90%',
+    height: '90%',
+    marginTop: 40,
+    resizeMode: 'contain',
   },
-  input: {
-    flex: 1,
-    paddingVertical: 10,
-    color: '#333',
+  buttonContainer: {
+    marginTop: 20,
+    width: screenWidth,
+    paddingHorizontal: 20,
   },
   button: {
-    backgroundColor: '#FF6347',
-    padding: 15,
-    width: '100%',
-    borderRadius: 10,
+    backgroundColor: '#FCC434',
+    paddingVertical: 15,
+    borderRadius: 30,
     alignItems: 'center',
-    marginTop: 10,
+    marginBottom: 10,
   },
   buttonText: {
-    color: '#fff',
+    color: 'black',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  subtitle: {
-    marginTop: 20,
-    fontSize: 16,
-    color: '#777',
-  },
-  link: {
-    color: '#FF6347',
-    fontWeight: 'bold',
-  },
-  forgotPassword: {
+  termsContainer: {
+    alignItems: 'center',
     marginTop: 10,
-    fontSize: 16,
-    color: '#FF6347',
-    fontWeight: 'bold',
+  },
+  termsText: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
 
